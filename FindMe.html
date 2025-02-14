@@ -1,0 +1,1374 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>FIND ME</title>
+  <style>
+    /* Global Styles & Colors */
+    body {
+      background-color: #001f3f;
+      color: white;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      transition: background-color 0.5s;
+    }
+    .container {
+      padding: 20px;
+    }
+    h1, h2, h3 {
+      text-align: center;
+    }
+    .hidden { display: none; }
+    /* Button Styles & Animations */
+    button {
+      background-color: orange;
+      color: #001f3f;
+      border: none;
+      padding: 10px 20px;
+      margin: 5px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: transform 0.2s, background-color 0.2s;
+    }
+    button:hover {
+      transform: scale(1.1);
+      background-color: #ffb84d;
+    }
+    /* Form Inputs */
+    input, select, textarea {
+      padding: 5px;
+      margin: 5px;
+      border-radius: 3px;
+    }
+    /* Advert Section */
+    #advertSection {
+      background-color: #ff851b;
+      color: #001f3f;
+      padding: 10px;
+      margin: 10px;
+      position: relative;
+    }
+    /* Result Items */
+    .resultItem {
+      border: 1px solid white;
+      margin: 5px;
+      padding: 5px;
+      transition: background-color 0.3s;
+    }
+    .resultItem:hover {
+      background-color: rgba(255,255,255,0.1);
+    }
+    /* Fade In Animation */
+    .fadeIn {
+      animation: fadeIn 0.5s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    /* Image Styling */
+    img.normal {
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      transition: width 0.3s, height 0.3s;
+      margin: 5px;
+    }
+    img.enlarged {
+      width: 150px;
+      height: 150px;
+      cursor: pointer;
+      transition: width 0.3s, height 0.3s;
+      margin: 5px;
+    }
+    /* Provider Photo Display */
+    #displayPhoto img {
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Home Page -->
+  <div id="homePage" class="container fadeIn">
+    <h1>FIND ME</h1>
+    <button id="findServiceBtn">Find Service</button>
+    <button id="addServiceBtn">Add Service</button>
+    <button id="loginBtn">Login</button>
+    <div id="advertSection">
+      <h3>Advert</h3>
+      <div id="advertContent"></div>
+      <button id="wantAdvertBtn">Want advert? Click me</button>
+    </div>
+  </div>
+  
+  <!-- Registration Page (Upload One Photo) -->
+  <div id="addServicePage" class="container hidden fadeIn">
+    <h2>Add Service</h2>
+    <form id="addServiceForm">
+      <label>Name (case sensitive):</label><br/>
+      <input type="text" id="providerName" required /><br/>
+      
+      <label>Password:</label><br/>
+      <input type="password" id="providerPassword" required /><br/>
+      
+      <label>Confirm Password:</label><br/>
+      <input type="password" id="providerConfirmPassword" required /><br/>
+      
+      <label>Age:</label><br/>
+      <input type="number" id="providerAge" required /><br/>
+      
+      <label>Gender:</label><br/>
+      <select id="providerGender">
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select><br/>
+      
+      <label>Town:</label><br/>
+      <select id="providerTown">
+        <option>Bamenda</option>
+        <option>Buea</option>
+        <option>Bafoussam</option>
+        <option>Yaounde</option>
+        <option>Douala</option>
+        <option>Kribi</option>
+        <option>Kumba</option>
+        <option>Limbe</option>
+        <option>Bertoua</option>
+        <option>Ngaoundere</option>
+      </select><br/>
+      
+      <label>Service:</label><br/>
+      <select id="providerService"></select><br/>
+      
+      <label>Minimum Payment (up to 6 figures):</label><br/>
+      <input type="number" id="providerMinPayment" required /><br/>
+      
+      <label>WhatsApp Number:</label><br/>
+      <input type="text" id="providerWhatsapp" required /><br/>
+      
+      <label>Quater (optional):</label><br/>
+      <input type="text" id="providerQuater"><br/><br/>
+      
+      <label>Upload a Photo (only one):</label><br/>
+      <input type="file" id="providerPhoto" accept="image/*"><br/><br/>
+      
+      <button type="submit">Submit</button>
+    </form>
+    <button onclick="goBack()">Back</button>
+  </div>
+  
+  <!-- Login Page -->
+  <div id="loginPage" class="container hidden fadeIn">
+    <h2>Login</h2>
+    <form id="loginForm">
+      <label>Name:</label><br/>
+      <input type="text" id="loginName" required /><br/>
+      <label>Password:</label><br/>
+      <input type="password" id="loginPassword" required /><br/><br/>
+      <button type="submit">Login</button>
+    </form>
+    <button onclick="goBack()">Back</button>
+  </div>
+  
+  <!-- Service Provider Profile Page -->
+  <div id="providerProfilePage" class="container hidden fadeIn">
+    <h2>Service Provider Profile</h2>
+    <!-- Display Area -->
+    <div id="profileDisplay" class="fadeIn">
+      <p><strong>Name:</strong> <span id="displayName"></span></p>
+      <p><strong>Age:</strong> <span id="displayAge"></span></p>
+      <p><strong>Gender:</strong> <span id="displayGender"></span></p>
+      <p><strong>Town:</strong> <span id="displayTown"></span></p>
+      <p><strong>Service:</strong> <span id="displayService"></span></p>
+      <p><strong>Minimum Payment:</strong> <span id="displayMinPayment"></span></p>
+      <p><strong>WhatsApp:</strong> <span id="displayWhatsapp"></span></p>
+      <p><strong>Quater:</strong> <span id="displayQuater"></span></p>
+      <p><strong>Rating:</strong> <span id="displayRating"></span></p>
+      <div id="displayPhoto"></div>
+      <button id="updateInfoBtn">Update Information</button>
+    </div>
+    <!-- Update Form (Includes Option to Replace Photo) -->
+    <div id="updateFormContainer" class="hidden fadeIn">
+      <h3>Update Information</h3>
+      <form id="updateProfileForm">
+        <p><strong>Name:</strong> <span id="updateDisplayName"></span></p>
+        <label>Age:</label><br/>
+        <input type="number" id="profileAge" required /><br/>
+        <label>Gender:</label><br/>
+        <select id="profileGender">
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select><br/>
+        <label>Town:</label><br/>
+        <select id="profileTown">
+          <option>Bamenda</option>
+          <option>Buea</option>
+          <option>Bafoussam</option>
+          <option>Yaounde</option>
+          <option>Douala</option>
+          <option>Kribi</option>
+          <option>Kumba</option>
+          <option>Limbe</option>
+          <option>Bertoua</option>
+          <option>Ngaoundere</option>
+        </select><br/>
+        <label>Service:</label><br/>
+        <select id="profileService"></select><br/>
+        <label>Minimum Payment:</label><br/>
+        <input type="number" id="profileMinPayment" required /><br/>
+        <label>WhatsApp Number:</label><br/>
+        <input type="text" id="profileWhatsapp" required /><br/>
+        <label>Quater (optional):</label><br/>
+        <input type="text" id="profileQuater"><br/><br/>
+        <label>Update Photo (this will replace your current photo):</label><br/>
+        <input type="file" id="updatePhoto" accept="image/*"><br/><br/>
+        <button type="submit">Save Updates</button>
+        <button type="button" id="cancelUpdateBtn">Cancel</button>
+      </form>
+    </div>
+    <!-- Provider's Admin Notifications -->
+    <div id="providerNotifications" class="fadeIn">
+      <h3>Admin Notifications</h3>
+      <div id="notificationsList"></div>
+    </div>
+    <!-- Interested Visitors Section (shows only first 4 digits of phone numbers) -->
+    <div id="visitorMessagesDiv" class="fadeIn">
+      <h3>Interested Visitors</h3>
+      <button id="seeInterestedBtn">See Interested Visitors</button>
+      <div id="visitorMessagesList" class="hidden"></div>
+    </div>
+    <button onclick="logout()">Logout</button>
+  </div>
+  
+  <!-- Find Service Page -->
+  <div id="findServicePage" class="container hidden fadeIn">
+    <h2>Find Service</h2>
+    <input type="text" id="searchBar" placeholder="Search by Name, Service or Town"><br/>
+    <button onclick="performSearch()">Search</button>
+    <button onclick="findByTownService()">Find by Town and Service</button>
+    <div id="searchResults"></div>
+    <button onclick="goBack()">Back</button>
+  </div>
+  
+  <!-- Admin Panel Page -->
+  <div id="adminPanel" class="container hidden fadeIn">
+    <h2>Admin Panel</h2>
+    <div id="adminContent"></div>
+    <button onclick="logoutAdmin()">Logout</button>
+  </div>
+  
+  <script>
+    /* ---------------- Initialization ---------------- */
+    if (!localStorage.getItem('providers')) {
+      localStorage.setItem('providers', JSON.stringify([]));
+    }
+    if (!localStorage.getItem('adminPassword')) {
+      localStorage.setItem('adminPassword', 'admin123');
+    }
+    if (!localStorage.getItem('serviceOptions')) {
+      const defaultServices = ["Pianist", "Bassist", "Saxophonist", "Drummer", "Sololist", "Singer", "Comedian", "MC", "Dj", "Service Traiter", "Cake and pastries", "Driver on Hire", "Electrician", "Graphic Designer", "Music Band", "Halls", "Car for rent", "Event Decor", "House Help", "Delivery Agent", "Makup Artist", "Hair styler", "Builder", "Painter", "Taxi driver", "Bike man"];
+      localStorage.setItem('serviceOptions', JSON.stringify(defaultServices));
+    }
+    let currentProvider = null;
+    let advertRequests = JSON.parse(localStorage.getItem('advertRequests') || '[]');
+    
+    /* ---------------- Helper: Populate Service Options ---------------- */
+    function populateServiceOptions(selectId) {
+      const selectEl = document.getElementById(selectId);
+      selectEl.innerHTML = "";
+      const services = JSON.parse(localStorage.getItem('serviceOptions'));
+      services.forEach(serv => {
+        const opt = document.createElement('option');
+        opt.value = serv;
+        opt.innerText = serv;
+        selectEl.appendChild(opt);
+      });
+    }
+    populateServiceOptions("providerService");
+    populateServiceOptions("profileService");
+    
+    /* ---------------- Navigation Helpers ---------------- */
+    function goTo(pageId) {
+      document.querySelectorAll('.container').forEach(el => el.classList.add('hidden'));
+      const page = document.getElementById(pageId);
+      page.classList.remove('hidden');
+      page.classList.add('fadeIn');
+    }
+    function goBack() { goTo('homePage'); }
+    
+    /* ---------------- Home Page Buttons ---------------- */
+    document.getElementById('addServiceBtn').addEventListener('click', function() {
+      if (localStorage.getItem('registeredProvider')) {
+        alert("You have already added a service.");
+      } else {
+        goTo('addServicePage');
+      }
+    });
+    document.getElementById('loginBtn').addEventListener('click', function() { goTo('loginPage'); });
+    document.getElementById('findServiceBtn').addEventListener('click', function() { goTo('findServicePage'); });
+    
+    // "Want advert? Click me" button on Home Page
+    document.getElementById('wantAdvertBtn').addEventListener('click', function() {
+      let visitorWhatsapp = prompt("Enter your WhatsApp number for advert request:");
+      let visitorMessage = prompt("Enter a short message for your advert request:");
+      if(visitorWhatsapp && visitorMessage) {
+        const interest = { whatsapp: visitorWhatsapp, message: visitorMessage, date: new Date().toLocaleString() };
+        advertRequests.push(interest);
+        localStorage.setItem('advertRequests', JSON.stringify(advertRequests));
+        alert("Your advert request has been submitted.");
+      }
+    });
+    
+    /* ---------------- Registration Page ---------------- */
+    document.getElementById('addServiceForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('providerName').value.trim();
+      const password = document.getElementById('providerPassword').value;
+      const confirmPassword = document.getElementById('providerConfirmPassword').value;
+      const age = document.getElementById('providerAge').value;
+      const gender = document.getElementById('providerGender').value;
+      const town = document.getElementById('providerTown').value;
+      const service = document.getElementById('providerService').value;
+      const minPayment = document.getElementById('providerMinPayment').value;
+      const whatsapp = document.getElementById('providerWhatsapp').value;
+      const quater = document.getElementById('providerQuater').value;
+      
+      if (password !== confirmPassword) {
+        alert("Passwords do not match!");
+        return;
+      }
+      if (minPayment > 999999) {
+        alert("Minimum payment should not exceed 6 figures.");
+        return;
+      }
+      let providers = JSON.parse(localStorage.getItem('providers'));
+      if (providers.find(p => p.name === name)) {
+        alert("Service provider with this name already exists.");
+        return;
+      }
+      
+      const photoInput = document.getElementById('providerPhoto');
+      if(photoInput.files.length > 0) {
+        const file = photoInput.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const newProvider = {
+            name, password, age, gender, town, service, minPayment, whatsapp, quater,
+            photo: e.target.result,
+            notifications: [], visitorInterests: [],
+            ratingTotal: 0, ratingCount: 0, blocked: false
+          };
+          providers.push(newProvider);
+          localStorage.setItem('providers', JSON.stringify(providers));
+          localStorage.setItem('registeredProvider', name);
+          currentProvider = newProvider;
+          alert("Service registered successfully!");
+          goTo('providerProfilePage');
+        };
+        reader.readAsDataURL(file);
+      } else {
+        const newProvider = {
+          name, password, age, gender, town, service, minPayment, whatsapp, quater,
+          photo: "",
+          notifications: [], visitorInterests: [],
+          ratingTotal: 0, ratingCount: 0, blocked: false
+        };
+        providers.push(newProvider);
+        localStorage.setItem('providers', JSON.stringify(providers));
+        localStorage.setItem('registeredProvider', name);
+        currentProvider = newProvider;
+        alert("Service registered successfully!");
+        goTo('providerProfilePage');
+      }
+    });
+    
+    /* ---------------- Login ---------------- */
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('loginName').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      let providers = JSON.parse(localStorage.getItem('providers'));
+      const provider = providers.find(p => p.name === name && p.password === password);
+      if (provider) {
+        currentProvider = provider;
+        localStorage.setItem('registeredProvider', name);
+        loadProviderProfile();
+        goTo('providerProfilePage');
+      } else {
+        alert("Invalid credentials!");
+      }
+    });
+    
+    /* ---------------- Service Provider Profile ---------------- */
+    function loadProviderProfile() {
+      if (!currentProvider) return;
+      loadProfileDisplay();
+      loadNotifications();
+      document.getElementById('visitorMessagesList').classList.add('hidden');
+    }
+    function loadProfileDisplay() {
+      document.getElementById('displayName').innerText = currentProvider.name;
+      document.getElementById('displayAge').innerText = currentProvider.age;
+      document.getElementById('displayGender').innerText = currentProvider.gender;
+      document.getElementById('displayTown').innerText = currentProvider.town;
+      document.getElementById('displayService').innerText = currentProvider.service;
+      document.getElementById('displayMinPayment').innerText = currentProvider.minPayment;
+      document.getElementById('displayWhatsapp').innerText = currentProvider.whatsapp;
+      document.getElementById('displayQuater').innerText = currentProvider.quater || "N/A";
+      let ratingText = (currentProvider.ratingCount > 0) ?
+        ((currentProvider.ratingTotal/currentProvider.ratingCount).toFixed(1) + "/5 (" + currentProvider.ratingCount + " ratings)") :
+        "No ratings yet";
+      document.getElementById('displayRating').innerText = ratingText;
+      
+      // Display provider photo (if any)
+      const photoDiv = document.getElementById('displayPhoto');
+      photoDiv.innerHTML = "";
+      if(currentProvider.photo) {
+        let img = document.createElement('img');
+        img.src = currentProvider.photo;
+        img.classList.add('normal');
+        img.onclick = function(){ toggleImageSize(img); }
+        photoDiv.appendChild(img);
+      }
+      
+      document.getElementById('updateDisplayName').innerText = currentProvider.name;
+      document.getElementById('profileAge').value = currentProvider.age;
+      document.getElementById('profileGender').value = currentProvider.gender;
+      document.getElementById('profileTown').value = currentProvider.town;
+      populateServiceOptions("profileService");
+      document.getElementById('profileService').value = currentProvider.service;
+      document.getElementById('profileMinPayment').value = currentProvider.minPayment;
+      document.getElementById('profileWhatsapp').value = currentProvider.whatsapp;
+      document.getElementById('profileQuater').value = currentProvider.quater;
+    }
+    function toggleImageSize(img) {
+      if(img.classList.contains('normal')) {
+        img.classList.remove('normal');
+        img.classList.add('enlarged');
+      } else {
+        img.classList.remove('enlarged');
+        img.classList.add('normal');
+      }
+    }
+    // "Interested Visitors" section – display only the first 4 digits of visitor numbers.
+    function updateVisitorMessages() {
+      const visitorListDiv = document.getElementById('visitorMessagesList');
+      visitorListDiv.innerHTML = "";
+      if (currentProvider.visitorInterests && currentProvider.visitorInterests.length > 0) {
+        currentProvider.visitorInterests.forEach((interest, index) => {
+          const msgDiv = document.createElement('div');
+          msgDiv.classList.add('fadeIn');
+          msgDiv.innerHTML = `<strong>Visitor (first 4 digits):</strong> ${interest.whatsapp.slice(0,4)}`;
+          let delBtn = document.createElement('button');
+          delBtn.innerText = "Delete";
+          delBtn.onclick = function() {
+            currentProvider.visitorInterests.splice(index, 1);
+            saveCurrentProvider();
+            updateVisitorMessages();
+          }
+          msgDiv.appendChild(delBtn);
+          visitorListDiv.appendChild(msgDiv);
+        });
+      } else {
+        visitorListDiv.innerHTML = "<p>No interested visitors.</p>";
+      }
+    }
+    document.getElementById('seeInterestedBtn').addEventListener('click', function() {
+      const listDiv = document.getElementById('visitorMessagesList');
+      if (listDiv.classList.contains('hidden')) {
+        listDiv.classList.remove('hidden');
+        updateVisitorMessages();
+      } else {
+        listDiv.classList.add('hidden');
+      }
+    });
+    function loadNotifications() {
+      const notifDiv = document.getElementById('notificationsList');
+      notifDiv.innerHTML = "";
+      if (currentProvider && currentProvider.notifications) {
+        currentProvider.notifications.forEach((notif, index) => {
+          const nDiv = document.createElement('div');
+          nDiv.classList.add('fadeIn');
+          nDiv.innerHTML = `<strong>From Admin:</strong> ${notif.message} <em>${notif.date}</em>`;
+          if(notif.reply || notif.adminReply) {
+            nDiv.innerHTML += `<br/><strong>Reply:</strong> ${notif.reply || notif.adminReply}`;
+          }
+          if (notif.canReply) {
+            let replyBtn = document.createElement('button');
+            replyBtn.innerText = "Reply";
+            replyBtn.onclick = function() {
+              let replyMsg = prompt("Enter your reply:");
+              if(replyMsg) {
+                notif.reply = replyMsg;
+                saveCurrentProvider();
+                loadNotifications();
+              }
+            }
+            nDiv.appendChild(replyBtn);
+          }
+          let delBtn = document.createElement('button');
+          delBtn.innerText = "Delete";
+          delBtn.onclick = function() {
+            currentProvider.notifications.splice(index, 1);
+            saveCurrentProvider();
+            loadNotifications();
+          }
+          nDiv.appendChild(delBtn);
+          notifDiv.appendChild(nDiv);
+        });
+      }
+    }
+    function saveCurrentProvider() {
+      let providers = JSON.parse(localStorage.getItem('providers'));
+      providers = providers.map(p => (p.name === currentProvider.name ? currentProvider : p));
+      localStorage.setItem('providers', JSON.stringify(providers));
+    }
+    function logout() {
+      currentProvider = null;
+      localStorage.removeItem('registeredProvider');
+      goTo('homePage');
+    }
+    
+    document.getElementById('updateInfoBtn').addEventListener('click', function() {
+      document.getElementById('profileDisplay').classList.add('hidden');
+      document.getElementById('updateFormContainer').classList.remove('hidden');
+    });
+    document.getElementById('cancelUpdateBtn').addEventListener('click', function() {
+      document.getElementById('updateFormContainer').classList.add('hidden');
+      document.getElementById('profileDisplay').classList.remove('hidden');
+    });
+    // Update form now allows replacing the photo
+    document.getElementById('updateProfileForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (!currentProvider) return;
+      currentProvider.age = document.getElementById('profileAge').value;
+      currentProvider.gender = document.getElementById('profileGender').value;
+      currentProvider.town = document.getElementById('profileTown').value;
+      currentProvider.service = document.getElementById('profileService').value;
+      currentProvider.minPayment = document.getElementById('profileMinPayment').value;
+      currentProvider.whatsapp = document.getElementById('profileWhatsapp').value;
+      currentProvider.quater = document.getElementById('profileQuater').value;
+      const updatePhotoInput = document.getElementById('updatePhoto');
+      if(updatePhotoInput.files.length > 0) {
+        const file = updatePhotoInput.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          // Replace the current photo with the new one
+          currentProvider.photo = e.target.result;
+          finalizeUpdate();
+        }
+        reader.readAsDataURL(file);
+      } else {
+        finalizeUpdate();
+      }
+      function finalizeUpdate() {
+        let providers = JSON.parse(localStorage.getItem('providers'));
+        providers = providers.map(p => (p.name === currentProvider.name ? currentProvider : p));
+        localStorage.setItem('providers', JSON.stringify(providers));
+        alert("Profile updated successfully!");
+        document.getElementById('updateFormContainer').classList.add('hidden');
+        document.getElementById('profileDisplay').classList.remove('hidden');
+        loadProfileDisplay();
+      }
+    });
+    
+    /* ---------------- Find Service ---------------- */
+    function performSearch() {
+      const query = document.getElementById('searchBar').value.trim().toLowerCase();
+      if(query === "adminn16") { adminLogin(); return; }
+      if(query === "changeme2") {
+        const newPass = prompt("Enter new admin password:");
+        const confirmPass = prompt("Confirm new admin password:");
+        if(newPass === confirmPass) {
+          localStorage.setItem('adminPassword', newPass);
+          alert("Admin password changed successfully!");
+        } else {
+          alert("Passwords do not match!");
+        }
+        return;
+      }
+      let providers = JSON.parse(localStorage.getItem('providers'));
+      const resultsDiv = document.getElementById('searchResults');
+      resultsDiv.innerHTML = "";
+      let results = providers.filter(p => 
+        !p.blocked &&
+        (p.name.toLowerCase().includes(query) || p.service.toLowerCase().includes(query) || p.town.toLowerCase().includes(query))
+      );
+      if(results.length === 0) { resultsDiv.innerHTML = "No providers found."; return; }
+      results.forEach(provider => {
+        const providerDiv = document.createElement('div');
+        providerDiv.className = "resultItem fadeIn";
+        let ratingText = (provider.ratingCount > 0) ? ((provider.ratingTotal/provider.ratingCount).toFixed(1) + "/5 (" + provider.ratingCount + " ratings)") : "No ratings yet";
+        providerDiv.innerHTML = `<strong>Name:</strong> ${provider.name} <br/>
+                                  <strong>Town:</strong> ${provider.town} <br/>
+                                  <strong>Quater:</strong> ${provider.quater || "N/A"} <br/>
+                                  <strong>Minimum Payment:</strong> ${provider.minPayment} <br/>
+                                  <strong>Rating:</strong> ${ratingText} <br/>`;
+        if(provider.photo) {
+          let img = document.createElement('img');
+          img.src = provider.photo;
+          img.classList.add('normal');
+          img.onclick = function() { toggleImageSize(img); }
+          providerDiv.appendChild(img);
+        }
+        let rateBtn = document.createElement('button');
+        rateBtn.innerText = "Rate";
+        rateBtn.onclick = function() {
+          const rating = prompt("Rate this provider (1-5):");
+          const ratingValue = Number(rating);
+          if(isNaN(ratingValue) || ratingValue < 1 || ratingValue > 5) { alert("Invalid rating."); return; }
+          let lastRatingTime = localStorage.getItem('rated_' + provider.name);
+          if(lastRatingTime && (Date.now() - lastRatingTime < 7*24*60*60*1000)) {
+            alert("You can only rate once a week.");
+            return;
+          }
+          provider.ratingTotal = Number(provider.ratingTotal) + ratingValue;
+          provider.ratingCount = Number(provider.ratingCount) + 1;
+          localStorage.setItem('rated_' + provider.name, Date.now());
+          let allProviders = JSON.parse(localStorage.getItem('providers'));
+          allProviders = allProviders.map(p => (p.name === provider.name ? provider : p));
+          localStorage.setItem('providers', JSON.stringify(allProviders));
+          alert("Thank you for rating!");
+          if(currentProvider && currentProvider.name === provider.name) {
+            currentProvider = provider;
+            loadProfileDisplay();
+          }
+          performSearch();
+        }
+        providerDiv.appendChild(rateBtn);
+        if (localStorage.getItem("interest_" + provider.name)) {
+          let cancelBtn = document.createElement('button');
+          cancelBtn.innerText = "Cancel Request";
+          cancelBtn.onclick = function() {
+            let storedInterest = JSON.parse(localStorage.getItem("interest_" + provider.name));
+            let allProviders = JSON.parse(localStorage.getItem('providers'));
+            allProviders = allProviders.map(p => {
+              if(p.name === provider.name) {
+                p.visitorInterests = p.visitorInterests.filter(interest => !(interest.whatsapp === storedInterest.whatsapp &&
+                                                                              interest.message === storedInterest.message &&
+                                                                              interest.date === storedInterest.date));
+              }
+              return p;
+            });
+            localStorage.setItem('providers', JSON.stringify(allProviders));
+            localStorage.removeItem("interest_" + provider.name);
+            alert("Your request has been cancelled.");
+            performSearch();
+          }
+          providerDiv.appendChild(cancelBtn);
+        } else {
+          let interestedBtn = document.createElement('button');
+          interestedBtn.innerText = "Interested";
+          interestedBtn.onclick = function() {
+            let visitorWhatsapp = prompt("Enter your WhatsApp number:");
+            let visitorMessage = prompt("Enter a short message:");
+            if(visitorWhatsapp && visitorMessage) {
+              const interest = { whatsapp: visitorWhatsapp, message: visitorMessage, date: new Date().toLocaleString() };
+              let allProviders = JSON.parse(localStorage.getItem('providers'));
+              allProviders = allProviders.map(p => {
+                if(p.name === provider.name) { p.visitorInterests.push(interest); }
+                return p;
+              });
+              localStorage.setItem('providers', JSON.stringify(allProviders));
+              localStorage.setItem("interest_" + provider.name, JSON.stringify(interest));
+              alert("Your interest has been noted.");
+              performSearch();
+            }
+          }
+          providerDiv.appendChild(interestedBtn);
+        }
+        resultsDiv.appendChild(providerDiv);
+      });
+    }
+    
+    // Find by Town and Service (dropdown selectors)
+    function findByTownService() {
+      const resultsDiv = document.getElementById('searchResults');
+      resultsDiv.innerHTML = "";
+      const selectorDiv = document.createElement('div');
+      const townLabel = document.createElement('label');
+      townLabel.innerText = "Select Town:";
+      const townSelect = document.createElement('select');
+      const towns = ["Bamenda", "Buea", "Bafoussam", "Yaounde", "Douala", "Kribi", "Kumba", "Limbe", "Bertoua", "Ngaoundere"];
+      towns.forEach(town => {
+        const opt = document.createElement('option');
+        opt.value = town;
+        opt.innerText = town;
+        townSelect.appendChild(opt);
+      });
+      const serviceLabel = document.createElement('label');
+      serviceLabel.innerText = "Select Service:";
+      const serviceSelect = document.createElement('select');
+      const services = JSON.parse(localStorage.getItem('serviceOptions'));
+      services.forEach(serv => {
+        const opt = document.createElement('option');
+        opt.value = serv;
+        opt.innerText = serv;
+        serviceSelect.appendChild(opt);
+      });
+      const searchBtn = document.createElement('button');
+      searchBtn.innerText = "Search";
+      searchBtn.onclick = function() {
+        const selectedTown = townSelect.value;
+        const selectedService = serviceSelect.value;
+        let providers = JSON.parse(localStorage.getItem('providers'));
+        let filtered = providers.filter(p =>
+          !p.blocked &&
+          p.town.toLowerCase() === selectedTown.toLowerCase() &&
+          p.service.toLowerCase() === selectedService.toLowerCase()
+        );
+        resultsDiv.innerHTML = "";
+        if(filtered.length === 0) {
+          resultsDiv.innerHTML = "No providers found.";
+          return;
+        }
+        filtered.forEach(provider => {
+          const providerDiv = document.createElement('div');
+          providerDiv.className = "resultItem fadeIn";
+          let ratingText = (provider.ratingCount > 0) ? ((provider.ratingTotal/provider.ratingCount).toFixed(1) + "/5 (" + provider.ratingCount + " ratings)") : "No ratings yet";
+          providerDiv.innerHTML = `<strong>Name:</strong> ${provider.name} <br/>
+                                    <strong>Town:</strong> ${provider.town} <br/>
+                                    <strong>Quater:</strong> ${provider.quater || "N/A"} <br/>
+                                    <strong>Minimum Payment:</strong> ${provider.minPayment} <br/>
+                                    <strong>Rating:</strong> ${ratingText} <br/>`;
+          if(provider.photo) {
+            let img = document.createElement('img');
+            img.src = provider.photo;
+            img.classList.add('normal');
+            img.onclick = function() { toggleImageSize(img); }
+            providerDiv.appendChild(img);
+          }
+          let rateBtn = document.createElement('button');
+          rateBtn.innerText = "Rate";
+          rateBtn.onclick = function() {
+            const rating = prompt("Rate this provider (1-5):");
+            const ratingValue = Number(rating);
+            if(isNaN(ratingValue) || ratingValue < 1 || ratingValue > 5) { alert("Invalid rating."); return; }
+            let lastRatingTime = localStorage.getItem('rated_' + provider.name);
+            if(lastRatingTime && (Date.now() - lastRatingTime < 7*24*60*60*1000)) {
+              alert("You can only rate once a week.");
+              return;
+            }
+            provider.ratingTotal = Number(provider.ratingTotal) + ratingValue;
+            provider.ratingCount = Number(provider.ratingCount) + 1;
+            localStorage.setItem('rated_' + provider.name, Date.now());
+            let allProviders = JSON.parse(localStorage.getItem('providers'));
+            allProviders = allProviders.map(p => (p.name === provider.name ? provider : p));
+            localStorage.setItem('providers', JSON.stringify(allProviders));
+            alert("Thank you for rating!");
+            if(currentProvider && currentProvider.name === provider.name) {
+              currentProvider = provider;
+              loadProfileDisplay();
+            }
+            findByTownService();
+          }
+          providerDiv.appendChild(rateBtn);
+          if (localStorage.getItem("interest_" + provider.name)) {
+            let cancelBtn = document.createElement('button');
+            cancelBtn.innerText = "Cancel Request";
+            cancelBtn.onclick = function() {
+              let storedInterest = JSON.parse(localStorage.getItem("interest_" + provider.name));
+              let allProviders = JSON.parse(localStorage.getItem('providers'));
+              allProviders = allProviders.map(p => {
+                if(p.name === provider.name) {
+                  p.visitorInterests = p.visitorInterests.filter(interest => !(interest.whatsapp === storedInterest.whatsapp &&
+                                                                              interest.message === storedInterest.message &&
+                                                                              interest.date === storedInterest.date));
+                }
+                return p;
+              });
+              localStorage.setItem('providers', JSON.stringify(allProviders));
+              localStorage.removeItem("interest_" + provider.name);
+              alert("Your request has been cancelled.");
+              findByTownService();
+            }
+            providerDiv.appendChild(cancelBtn);
+          } else {
+            let interestedBtn = document.createElement('button');
+            interestedBtn.innerText = "Interested";
+            interestedBtn.onclick = function() {
+              let visitorWhatsapp = prompt("Enter your WhatsApp number:");
+              let visitorMessage = prompt("Enter a short message:");
+              if(visitorWhatsapp && visitorMessage) {
+                const interest = { whatsapp: visitorWhatsapp, message: visitorMessage, date: new Date().toLocaleString() };
+                let allProviders = JSON.parse(localStorage.getItem('providers'));
+                allProviders = allProviders.map(p => {
+                  if(p.name === provider.name) { p.visitorInterests.push(interest); }
+                  return p;
+                });
+                localStorage.setItem('providers', JSON.stringify(allProviders));
+                localStorage.setItem("interest_" + provider.name, JSON.stringify(interest));
+                alert("Your interest has been noted.");
+                findByTownService();
+              }
+            }
+            providerDiv.appendChild(interestedBtn);
+          }
+          resultsDiv.appendChild(providerDiv);
+        });
+      }
+      const cancelSelectorBtn = document.createElement('button');
+      cancelSelectorBtn.innerText = "Cancel";
+      cancelSelectorBtn.onclick = function() { resultsDiv.innerHTML = ""; }
+      selectorDiv.appendChild(townLabel);
+      selectorDiv.appendChild(townSelect);
+      selectorDiv.appendChild(document.createElement('br'));
+      selectorDiv.appendChild(serviceLabel);
+      selectorDiv.appendChild(serviceSelect);
+      selectorDiv.appendChild(document.createElement('br'));
+      selectorDiv.appendChild(searchBtn);
+      selectorDiv.appendChild(cancelSelectorBtn);
+      resultsDiv.appendChild(selectorDiv);
+    }
+    
+    /* ---------------- Admin Panel ---------------- */
+    function adminLogin() {
+      const adminPass = prompt("Enter admin password:");
+      if(adminPass === localStorage.getItem('adminPassword')) {
+        goTo('adminPanel');
+        loadAdminPanel();
+      } else {
+        alert("Incorrect admin password.");
+      }
+    }
+    function loadAdminPanel() {
+      const adminDiv = document.getElementById('adminContent');
+      adminDiv.innerHTML = "<h3>Admin Panel</h3>";
+      // Button: Admin Notifications
+      const notifBtn = document.createElement('button');
+      notifBtn.innerText = "Admin Notifications";
+      notifBtn.onclick = adminNotifications;
+      adminDiv.appendChild(notifBtn);
+      // Button: Show Interested Messages
+      const interestedMsgBtn = document.createElement('button');
+      interestedMsgBtn.innerText = "Show Interested Messages";
+      interestedMsgBtn.onclick = adminShowInterestedMessages;
+      adminDiv.appendChild(interestedMsgBtn);
+      // Button: Message Provider
+      const msgProviderBtn = document.createElement('button');
+      msgProviderBtn.innerText = "Message Provider";
+      msgProviderBtn.onclick = adminMessageProvider;
+      adminDiv.appendChild(msgProviderBtn);
+      // Button: View Registered Providers
+      const viewProvidersBtn = document.createElement('button');
+      viewProvidersBtn.innerText = "View Registered Providers";
+      viewProvidersBtn.onclick = adminViewProviders;
+      adminDiv.appendChild(viewProvidersBtn);
+      // Button: Remove Service
+      const removeServiceBtn = document.createElement('button');
+      removeServiceBtn.innerText = "Remove Service";
+      removeServiceBtn.onclick = adminRemoveService;
+      adminDiv.appendChild(removeServiceBtn);
+      // Button: Advert – open advert interface
+      const advertBtn = document.createElement('button');
+      advertBtn.innerText = "Advert";
+      advertBtn.onclick = openAdvertPage;
+      adminDiv.appendChild(advertBtn);
+      // Button: Show Running Advert
+      const showAdvertsBtn = document.createElement('button');
+      showAdvertsBtn.innerText = "Show Running Advert";
+      showAdvertsBtn.onclick = adminShowAdverts;
+      adminDiv.appendChild(showAdvertsBtn);
+      // Button: Persons Interested in Advert
+      const advertInterestedBtn = document.createElement('button');
+      advertInterestedBtn.innerText = "Persons Interested in Advert";
+      advertInterestedBtn.onclick = adminShowAdvertInterestedPersons;
+      adminDiv.appendChild(advertInterestedBtn);
+      // Button: Add Service
+      const addServiceAdminBtn = document.createElement('button');
+      addServiceAdminBtn.innerText = "Add Service";
+      addServiceAdminBtn.onclick = function() {
+        const newService = prompt("Enter new service to add:");
+        if(newService) {
+          let services = JSON.parse(localStorage.getItem('serviceOptions'));
+          services.push(newService);
+          localStorage.setItem('serviceOptions', JSON.stringify(services));
+          alert("New service added.");
+          populateServiceOptions("providerService");
+          populateServiceOptions("profileService");
+        }
+      }
+      adminDiv.appendChild(addServiceAdminBtn);
+    }
+    
+    /* ---------------- Admin Remove Service ---------------- */
+    function adminRemoveService() {
+      const adminDiv = document.getElementById('adminContent');
+      adminDiv.innerHTML = "<h3>Remove Service</h3>";
+      const services = JSON.parse(localStorage.getItem('serviceOptions'));
+      if(services.length === 0) {
+        adminDiv.innerHTML += "<p>No services available.</p>";
+      } else {
+        services.forEach((service, index) => {
+          let sDiv = document.createElement('div');
+          sDiv.classList.add('fadeIn');
+          sDiv.innerHTML = `<strong>${service}</strong>`;
+          let removeBtn = document.createElement('button');
+          removeBtn.innerText = "Remove";
+          removeBtn.onclick = function() {
+            if(confirm("Remove service " + service + "?")) {
+              let currentServices = JSON.parse(localStorage.getItem('serviceOptions'));
+              currentServices.splice(index, 1);
+              localStorage.setItem('serviceOptions', JSON.stringify(currentServices));
+              alert("Service removed.");
+              populateServiceOptions("providerService");
+              populateServiceOptions("profileService");
+              adminRemoveService();
+            }
+          }
+          sDiv.appendChild(removeBtn);
+          adminDiv.appendChild(sDiv);
+        });
+      }
+      let backBtn = document.createElement('button');
+      backBtn.innerText = "Back";
+      backBtn.onclick = loadAdminPanel;
+      adminDiv.appendChild(backBtn);
+    }
+    
+    /* ---------------- Admin Notifications ---------------- */
+    function adminNotifications() {
+      const adminDiv = document.getElementById('adminContent');
+      adminDiv.innerHTML = "<h3>Admin Notifications</h3>";
+      let providers = JSON.parse(localStorage.getItem('providers'));
+      let notifListDiv = document.createElement('div');
+      providers.forEach(p => {
+        if(p.notifications && p.notifications.length > 0) {
+          p.notifications.forEach((notif, idx) => {
+            let nDiv = document.createElement('div');
+            nDiv.classList.add('fadeIn');
+            nDiv.innerHTML = `<strong>From Provider ${p.name}:</strong> ${notif.message} <em>${notif.date}</em>`;
+            if(notif.reply || notif.adminReply) {
+              nDiv.innerHTML += `<br/><strong>Reply:</strong> ${notif.reply || notif.adminReply}`;
+            }
+            let replyBtn = document.createElement('button');
+            replyBtn.innerText = "Reply";
+            replyBtn.onclick = function() {
+              let adminReply = prompt("Enter your reply:");
+              if(adminReply) {
+                notif.adminReply = adminReply;
+                let allProviders = JSON.parse(localStorage.getItem('providers'));
+                allProviders = allProviders.map(prov => (prov.name === p.name ? p : prov));
+                localStorage.setItem('providers', JSON.stringify(allProviders));
+                adminNotifications();
+              }
+            }
+            nDiv.appendChild(replyBtn);
+            let delBtn = document.createElement('button');
+            delBtn.innerText = "Delete";
+            delBtn.onclick = function() {
+              p.notifications.splice(idx, 1);
+              let allProviders = JSON.parse(localStorage.getItem('providers'));
+              allProviders = allProviders.map(prov => (prov.name === p.name ? p : prov));
+              localStorage.setItem('providers', JSON.stringify(allProviders));
+              adminNotifications();
+            }
+            nDiv.appendChild(delBtn);
+            notifListDiv.appendChild(nDiv);
+          });
+        }
+      });
+      if(notifListDiv.innerHTML === "") { notifListDiv.innerHTML = "<p>No notifications.</p>"; }
+      adminDiv.appendChild(notifListDiv);
+      let backBtn = document.createElement('button');
+      backBtn.innerText = "Back";
+      backBtn.onclick = loadAdminPanel;
+      adminDiv.appendChild(backBtn);
+    }
+    
+    /* ---------------- Admin Show Interested Messages ---------------- */
+    function adminShowInterestedMessages() {
+      const adminDiv = document.getElementById('adminContent');
+      adminDiv.innerHTML = "<h3>Show Interested Messages</h3>";
+      let msgList = document.createElement('div');
+      let providers = JSON.parse(localStorage.getItem('providers'));
+      providers.forEach(p => {
+        if(p.visitorInterests && p.visitorInterests.length > 0) {
+          p.visitorInterests.forEach((interest, idx) => {
+            let mDiv = document.createElement('div');
+            mDiv.classList.add('fadeIn');
+            mDiv.innerHTML = `<strong>Provider:</strong> ${p.name} | <strong>Visitor:</strong> ${interest.whatsapp} - ${interest.message} <em>${interest.date}</em>`;
+            let delBtn = document.createElement('button');
+            delBtn.innerText = "Delete";
+            delBtn.onclick = function() {
+              p.visitorInterests.splice(idx, 1);
+              let allProviders = JSON.parse(localStorage.getItem('providers'));
+              allProviders = allProviders.map(prov => (prov.name === p.name ? p : prov));
+              localStorage.setItem('providers', JSON.stringify(allProviders));
+              adminShowInterestedMessages();
+            }
+            mDiv.appendChild(delBtn);
+            msgList.appendChild(mDiv);
+          });
+        }
+      });
+      if(msgList.innerHTML === "") { msgList.innerHTML = "<p>No interested messages.</p>"; }
+      adminDiv.appendChild(msgList);
+      let backBtn = document.createElement('button');
+      backBtn.innerText = "Back";
+      backBtn.onclick = loadAdminPanel;
+      adminDiv.appendChild(backBtn);
+    }
+    
+    /* ---------------- Admin Message Provider ---------------- */
+    function adminMessageProvider() {
+      const adminDiv = document.getElementById('adminContent');
+      adminDiv.innerHTML = "";
+      let searchInput = document.createElement('input');
+      searchInput.placeholder = "Search by name or service";
+      adminDiv.appendChild(searchInput);
+      let searchBtn = document.createElement('button');
+      searchBtn.innerText = "Search";
+      adminDiv.appendChild(searchBtn);
+      let resultsDiv = document.createElement('div');
+      adminDiv.appendChild(resultsDiv);
+      searchBtn.onclick = function() {
+        let term = searchInput.value.trim().toLowerCase();
+        let providers = JSON.parse(localStorage.getItem('providers'));
+        let matches = providers.filter(p => p.name.toLowerCase().includes(term) || p.service.toLowerCase().includes(term));
+        resultsDiv.innerHTML = "";
+        if(matches.length === 0) { resultsDiv.innerHTML = "No providers found."; return; }
+        matches.forEach(provider => {
+          let provDiv = document.createElement('div');
+          provDiv.innerHTML = `<strong>${provider.name}</strong> - ${provider.service} (${provider.town})`;
+          let msgBtn = document.createElement('button');
+          msgBtn.innerText = "Message";
+          msgBtn.onclick = function() { adminSendMessageToProvider(provider); }
+          provDiv.appendChild(msgBtn);
+          resultsDiv.appendChild(provDiv);
+        });
+      }
+      let backBtn = document.createElement('button');
+      backBtn.innerText = "Back";
+      backBtn.onclick = loadAdminPanel;
+      adminDiv.appendChild(backBtn);
+    }
+    function adminSendMessageToProvider(provider) {
+      const adminDiv = document.getElementById('adminContent');
+      adminDiv.innerHTML = `<h3>Message ${provider.name}</h3>`;
+      let messageInput = document.createElement('textarea');
+      messageInput.placeholder = "Enter message to send";
+      adminDiv.appendChild(messageInput);
+      adminDiv.appendChild(document.createElement('br'));
+      let replyCheckbox = document.createElement('input');
+      replyCheckbox.type = "checkbox";
+      replyCheckbox.checked = true;
+      let replyLabel = document.createElement('label');
+      replyLabel.innerText = "Allow provider to reply";
+      adminDiv.appendChild(replyCheckbox);
+      adminDiv.appendChild(replyLabel);
+      adminDiv.appendChild(document.createElement('br'));
+      let sendBtn = document.createElement('button');
+      sendBtn.innerText = "Send Message";
+      sendBtn.onclick = function() {
+        let msg = messageInput.value.trim();
+        if(msg === "") { alert("Message cannot be empty."); return; }
+        provider.notifications.push({ message: msg, date: new Date().toLocaleString(), canReply: replyCheckbox.checked, reply: "" });
+        let allProviders = JSON.parse(localStorage.getItem('providers'));
+        allProviders = allProviders.map(p => (p.name === provider.name ? provider : p));
+        localStorage.setItem('providers', JSON.stringify(allProviders));
+        alert("Message sent to provider.");
+        loadAdminPanel();
+      }
+      adminDiv.appendChild(sendBtn);
+    }
+    
+    /* ---------------- Admin View Registered Providers ---------------- */
+    function adminViewProviders() {
+      const adminDiv = document.getElementById('adminContent');
+      adminDiv.innerHTML = "<h3>Registered Service Providers</h3>";
+      // Search by Name
+      let nameSearchInput = document.createElement('input');
+      nameSearchInput.placeholder = "Search by name";
+      adminDiv.appendChild(nameSearchInput);
+      let nameSearchBtn = document.createElement('button');
+      nameSearchBtn.innerText = "Search by Name";
+      adminDiv.appendChild(nameSearchBtn);
+      let nameResultsDiv = document.createElement('div');
+      adminDiv.appendChild(nameResultsDiv);
+      nameSearchBtn.onclick = function() {
+        let term = nameSearchInput.value.trim().toLowerCase();
+        let providers = JSON.parse(localStorage.getItem('providers'));
+        let matches = providers.filter(p => p.name.toLowerCase().includes(term));
+        nameResultsDiv.innerHTML = "";
+        if(matches.length === 0) { nameResultsDiv.innerHTML = "No providers found."; return; }
+        matches.forEach(provider => {
+          let ratingText = (provider.ratingCount > 0) ? ((provider.ratingTotal/provider.ratingCount).toFixed(1) + "/5 (" + provider.ratingCount + " ratings)") : "No ratings yet";
+          let info = `<strong>${provider.name}</strong><br/>
+                      Age: ${provider.age} | WhatsApp: ${provider.whatsapp} | Quater: ${provider.quater || "N/A"}<br/>
+                      Rating: ${ratingText}<br/>`;
+          if(provider.photo) {
+            info += `<img src="${provider.photo}" class="normal" onclick="toggleImageSize(this)">`;
+          }
+          let provDiv = document.createElement('div');
+          provDiv.classList.add('fadeIn');
+          provDiv.innerHTML = info;
+          let deleteBtn = document.createElement('button');
+          deleteBtn.innerText = "Delete";
+          deleteBtn.onclick = function() {
+            if(confirm("Delete this provider?")) {
+              let providers = JSON.parse(localStorage.getItem('providers'));
+              providers = providers.filter(p => p.name !== provider.name);
+              localStorage.setItem('providers', JSON.stringify(providers));
+              adminViewProviders();
+            }
+          }
+          provDiv.appendChild(deleteBtn);
+          let blockBtn = document.createElement('button');
+          blockBtn.innerText = provider.blocked ? "Unblock" : "Block";
+          blockBtn.onclick = function() {
+            let providers = JSON.parse(localStorage.getItem('providers'));
+            providers = providers.map(p => {
+              if(p.name === provider.name) { p.blocked = !p.blocked; }
+              return p;
+            });
+            localStorage.setItem('providers', JSON.stringify(providers));
+            adminViewProviders();
+          }
+          provDiv.appendChild(blockBtn);
+          nameResultsDiv.appendChild(provDiv);
+        });
+      }
+      // Search by Town or Service
+      let townServiceSearchInput = document.createElement('input');
+      townServiceSearchInput.placeholder = "Search by town or service";
+      adminDiv.appendChild(townServiceSearchInput);
+      let townServiceSearchBtn = document.createElement('button');
+      townServiceSearchBtn.innerText = "Search by Town/Service";
+      adminDiv.appendChild(townServiceSearchBtn);
+      let townServiceResultsDiv = document.createElement('div');
+      adminDiv.appendChild(townServiceResultsDiv);
+      townServiceSearchBtn.onclick = function() {
+        let term = townServiceSearchInput.value.trim().toLowerCase();
+        let providers = JSON.parse(localStorage.getItem('providers'));
+        let matches = providers.filter(p => p.town.toLowerCase().includes(term) || p.service.toLowerCase().includes(term));
+        townServiceResultsDiv.innerHTML = "";
+        if(matches.length === 0) { townServiceResultsDiv.innerHTML = "No providers found."; return; }
+        matches.forEach(provider => {
+          let ratingText = (provider.ratingCount > 0) ? ((provider.ratingTotal/provider.ratingCount).toFixed(1) + "/5 (" + provider.ratingCount + " ratings)") : "No ratings yet";
+          let info = `<strong>${provider.name}</strong><br/>
+                      Age: ${provider.age} | WhatsApp: ${provider.whatsapp} | Quater: ${provider.quater || "N/A"}<br/>
+                      Rating: ${ratingText}<br/>`;
+          if(provider.photo) {
+            info += `<img src="${provider.photo}" class="normal" onclick="toggleImageSize(this)">`;
+          }
+          let provDiv = document.createElement('div');
+          provDiv.classList.add('fadeIn');
+          provDiv.innerHTML = info;
+          let deleteBtn = document.createElement('button');
+          deleteBtn.innerText = "Delete";
+          deleteBtn.onclick = function() {
+            if(confirm("Delete this provider?")) {
+              let providers = JSON.parse(localStorage.getItem('providers'));
+              providers = providers.filter(p => p.name !== provider.name);
+              localStorage.setItem('providers', JSON.stringify(providers));
+              adminViewProviders();
+            }
+          }
+          provDiv.appendChild(deleteBtn);
+          let blockBtn = document.createElement('button');
+          blockBtn.innerText = provider.blocked ? "Unblock" : "Block";
+          blockBtn.onclick = function() {
+            let providers = JSON.parse(localStorage.getItem('providers'));
+            providers = providers.map(p => {
+              if(p.name === provider.name) { p.blocked = !p.blocked; }
+              return p;
+            });
+            localStorage.setItem('providers', JSON.stringify(providers));
+            adminViewProviders();
+          }
+          provDiv.appendChild(blockBtn);
+          townServiceResultsDiv.appendChild(provDiv);
+        });
+      }
+      let backBtn = document.createElement('button');
+      backBtn.innerText = "Back";
+      backBtn.onclick = loadAdminPanel;
+      adminDiv.appendChild(backBtn);
+    }
+    
+    /* ---------------- Admin Advert Requests ---------------- */
+    function adminAdvertRequests() {
+      const adminDiv = document.getElementById('adminContent');
+      adminDiv.innerHTML = "<h3>Advert Requests</h3>";
+      let reqDiv = document.createElement('div');
+      if(advertRequests.length === 0) {
+        reqDiv.innerHTML = "<p>No advert requests.</p>";
+      } else {
+        advertRequests.forEach((req, index) => {
+          let rDiv = document.createElement('div');
+          rDiv.classList.add('fadeIn');
+          rDiv.innerHTML = `<strong>Visitor Info:</strong> ${req.whatsapp} - ${req.message} <em>${req.date}</em>`;
+          let delBtn = document.createElement('button');
+          delBtn.innerText = "Delete";
+          delBtn.onclick = function() {
+            advertRequests.splice(index, 1);
+            localStorage.setItem('advertRequests', JSON.stringify(advertRequests));
+            adminAdvertRequests();
+          }
+          rDiv.appendChild(delBtn);
+          reqDiv.appendChild(rDiv);
+        });
+      }
+      adminDiv.appendChild(reqDiv);
+      let backBtn = document.createElement('button');
+      backBtn.innerText = "Back";
+      backBtn.onclick = loadAdminPanel;
+      adminDiv.appendChild(backBtn);
+    }
+    
+    /* ---------------- Admin Show Running Advert ---------------- */
+    function adminShowAdverts() {
+      const adminDiv = document.getElementById('adminContent');
+      adminDiv.innerHTML = "";
+      const advertsDiv = document.createElement('div');
+      advertsDiv.innerHTML = document.getElementById('advertContent').innerHTML;
+      adminDiv.appendChild(advertsDiv);
+      const advertDivs = advertsDiv.querySelectorAll("div");
+      advertDivs.forEach((div) => {
+        const delBtn = document.createElement('button');
+        delBtn.innerText = "Delete Advert";
+        delBtn.onclick = function() {
+          div.remove();
+          document.getElementById('advertContent').innerHTML = advertsDiv.innerHTML;
+          alert("Advert deleted.");
+        }
+        div.appendChild(delBtn);
+      });
+      const backBtn = document.createElement('button');
+      backBtn.innerText = "Back";
+      backBtn.onclick = loadAdminPanel;
+      adminDiv.appendChild(backBtn);
+    }
+    
+    /* ---------------- Admin Show Persons Interested in Advert ---------------- */
+    function adminShowAdvertInterestedPersons() {
+      const adminDiv = document.getElementById('adminContent');
+      adminDiv.innerHTML = "<h3>Persons Interested in Advert</h3>";
+      let reqDiv = document.createElement('div');
+      if(advertRequests.length === 0) {
+        reqDiv.innerHTML = "<p>No advert interests.</p>";
+      } else {
+        advertRequests.forEach((req, index) => {
+          let rDiv = document.createElement('div');
+          rDiv.classList.add('fadeIn');
+          rDiv.innerHTML = `<strong>Visitor Info:</strong> ${req.whatsapp} - ${req.message} <em>${req.date}</em>`;
+          let delBtn = document.createElement('button');
+          delBtn.innerText = "Delete";
+          delBtn.onclick = function() {
+            advertRequests.splice(index, 1);
+            localStorage.setItem('advertRequests', JSON.stringify(advertRequests));
+            adminShowAdvertInterestedPersons();
+          }
+          rDiv.appendChild(delBtn);
+          reqDiv.appendChild(rDiv);
+        });
+      }
+      adminDiv.appendChild(reqDiv);
+      let backBtn = document.createElement('button');
+      backBtn.innerText = "Back";
+      backBtn.onclick = loadAdminPanel;
+      adminDiv.appendChild(backBtn);
+    }
+    
+    /* ---------------- Open Advert Page ---------------- */
+    function openAdvertPage() {
+      // In the advert interface, no back-to-admin button.
+      const adminDiv = document.getElementById('adminContent');
+      adminDiv.innerHTML = "<h3>Advert Interface</h3>";
+      let searchTerm = prompt("Enter provider name to add advert, or leave blank for a standalone advert:");
+      let advertContent = document.getElementById('advertContent').innerHTML;
+      if(searchTerm) {
+        let providers = JSON.parse(localStorage.getItem('providers'));
+        const provider = providers.find(p => p.name.toLowerCase() === searchTerm.toLowerCase());
+        if(provider) {
+          advertContent += `<div style="border:1px solid #001f3f; margin:5px; padding:5px;">
+                              <strong>${provider.name}</strong><br/>
+                              Service: ${provider.service}<br/>
+                              Town: ${provider.town}<br/>`;
+          if(provider.photo) {
+            advertContent += `<img src="${provider.photo}" style="width:50px; height:50px; margin:2px;" class="normal" onclick="toggleImageSize(this)">`;
+          }
+          if(!localStorage.getItem("currentVisitorAdvertInterest")) {
+            advertContent += `<button onclick="advertInterested('${provider.name}')">Interested</button>`;
+          } else {
+            advertContent += `<button onclick="cancelAdvertInterest('${provider.name}')">Cancel Request</button>`;
+          }
+          advertContent += `</div>`;
+          document.getElementById('advertContent').innerHTML = advertContent;
+          alert("Advert added for provider " + provider.name);
+        } else {
+          alert("Provider not found.");
+        }
+      } else {
+        let advertURL = prompt("Enter URL of advert image or video for standalone advert:");
+        if(advertURL) {
+          advertContent += `<div style="border:1px solid #001f3f; margin:5px; padding:5px;">
+                              <a href="${advertURL}" target="_blank">${advertURL}</a>`;
+          if(!localStorage.getItem("currentVisitorAdvertInterest")) {
+            advertContent += `<button onclick="advertInterested('')">Interested</button>`;
+          } else {
+            advertContent += `<button onclick="cancelAdvertInterest('')">Cancel Request</button>`;
+          }
+          advertContent += `</div>`;
+          document.getElementById('advertContent').innerHTML = advertContent;
+          alert("Advert added.");
+        }
+      }
+    }
+    
+    function advertInterested(providerName) {
+      let visitorWhatsapp = prompt("Enter your WhatsApp number:");
+      let visitorMessage = prompt("Enter a short message:");
+      if(visitorWhatsapp && visitorMessage) {
+        const interest = { whatsapp: visitorWhatsapp, message: visitorMessage, date: new Date().toLocaleString() };
+        if(providerName) {
+          let providers = JSON.parse(localStorage.getItem('providers'));
+          providers = providers.map(p => {
+            if(p.name === providerName) {
+              p.visitorInterests.push(interest);
+            }
+            return p;
+          });
+          localStorage.setItem('providers', JSON.stringify(providers));
+          alert("Your interest has been sent to provider " + providerName);
+        } else {
+          advertRequests.push(interest);
+          localStorage.setItem('advertRequests', JSON.stringify(advertRequests));
+          alert("Your advert interest has been noted.");
+        }
+        localStorage.setItem("currentVisitorAdvertInterest", JSON.stringify(interest));
+      }
+    }
+    
+    function cancelAdvertInterest(providerName) {
+      let interestStr = localStorage.getItem("currentVisitorAdvertInterest");
+      if(interestStr) {
+        let interest = JSON.parse(interestStr);
+        if(providerName) {
+          let providers = JSON.parse(localStorage.getItem('providers'));
+          providers = providers.map(p => {
+            if(p.name === providerName) {
+              p.visitorInterests = p.visitorInterests.filter(i => i.whatsapp !== interest.whatsapp || i.message !== interest.message);
+            }
+            return p;
+          });
+          localStorage.setItem('providers', JSON.stringify(providers));
+          alert("Your interest for provider " + providerName + " has been cancelled.");
+        } else {
+          advertRequests = advertRequests.filter(i => i.whatsapp !== interest.whatsapp || i.message !== interest.message);
+          localStorage.setItem('advertRequests', JSON.stringify(advertRequests));
+          alert("Your advert interest has been cancelled.");
+        }
+        localStorage.removeItem("currentVisitorAdvertInterest");
+      }
+    }
+    
+    function logoutAdmin() { goTo('homePage'); }
+  </script>
+</body>
+</html>
+
